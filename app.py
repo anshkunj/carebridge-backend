@@ -96,7 +96,7 @@ def landing():
             <h1>🚑 CareBridge AI</h1>
             <p>Accessibility First Health Risk Analyzer</p>
 
-            <a href="https://your-frontend-github-pages-link">
+            <a href="https://anshkunj.github.io/Carebridge-AI">
                 🌍 Open CareBridge Frontend
             </a>
         </div>
