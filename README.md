@@ -69,7 +69,7 @@ GitHub Pages
 
 ## 🐍 Backend API
 #### Post ```/analyze```
-** Request:**  
+**Request:**  
 {  
   "symptoms": "fever cough",  
   "age": 25  
