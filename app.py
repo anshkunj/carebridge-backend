@@ -1,119 +1,95 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import random
 
 app = Flask(__name__)
 CORS(app)
 
-# Startup AI Medical Intelligence Engine
-def ai_triage_engine(symptoms, age):
+# ============================
+# AI STYLE TRIAGE ENGINE
+# ============================
+
+def analyze_health(symptoms, age):
 
     symptoms = symptoms.lower()
+    score = 0
 
-    risk_score = 0
+    # Symptom intelligence scoring
+    if "fever" in symptoms: score += 2
+    if "cough" in symptoms: score += 2
+    if "fatigue" in symptoms: score += 1
+    if "headache" in symptoms: score += 1
+    if "vomiting" in symptoms: score += 3
+    if "dizziness" in symptoms: score += 3
 
-    # Medical pattern intelligence
-    severity_words = ["severe","extreme","unbearable","very bad"]
-    emergency_words = ["unconscious","bleeding","heart attack","paralyzed"]
+    if "chest pain" in symptoms: score += 5
+    if "breathing" in symptoms or "shortness" in symptoms:
+        score += 5
 
-    # Pattern detection
-    if any(w in symptoms for w in emergency_words):
-        risk_score += 10
+    # Age risk factor
+    if age >= 60: score += 3
+    if age <= 5: score += 2
 
-    if "fever" in symptoms: risk_score += 2
-    if "cough" in symptoms: risk_score += 2
-    if "chest pain" in symptoms: risk_score += 6
-    if "breathing" in symptoms: risk_score += 6
-    if age > 60: risk_score += 3
+    # Risk classification
+    if score <= 3:
+        risk = "Low"
+        confidence = 75
+        advice = "Rest, hydrate and monitor symptoms."
 
-    # Startup style probability scoring
-    probability = min(98, risk_score * 10 + random.randint(5,15))
-
-    if probability < 40:
-        risk="Low"
-        advice="Rest + hydration recommended"
-
-    elif probability < 75:
-        risk="Moderate"
-        advice="Monitor symptoms and consult doctor"
+    elif score <= 7:
+        risk = "Moderate"
+        confidence = 85
+        advice = "Consider consulting doctor if symptoms persist."
 
     else:
-        risk="High"
-        advice="🚨 Seek immediate medical attention"
+        risk = "High"
+        confidence = 95
+        advice = "🚨 Immediate medical attention recommended."
 
-    sustainability_score = max(0,100-probability)
+    # Sustainability / Health impact score (Unique hackathon feature)
+    sustainability_score = max(0, 100 - (score * 10))
 
-    return risk, probability, advice, sustainability_score
+    return {
+        "risk": risk,
+        "confidence": confidence,
+        "explanation": advice,
+        "sustainability": sustainability_score
+    }
 
+
+# ============================
+# API ENDPOINT
+# ============================
 
 @app.route("/")
-def index():
-    return """
-    <html>
-    <head>
-        <meta http-equiv="refresh" content="2; url=https://anshkunj.github.io/carebridge-ai/" />
-
-        <style>
-            body{
-                background:#0f172a;
-                color:white;
-                font-family:Segoe UI;
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                height:100vh;
-                flex-direction:column;
-                text-align:center;
-            }
-
-            .loader{
-                width:60px;
-                height:60px;
-                border-radius:50%;
-                border:6px solid #38bdf8;
-                border-top-color:transparent;
-                animation:spin 1s linear infinite;
-                margin-bottom:20px;
-            }
-
-            @keyframes spin{
-                to{ transform:rotate(360deg); }
-            }
-
-            h2{
-                color:#38bdf8;
-            }
-        </style>
-    </head>
-
-    <body>
-
-        <div class="loader"></div>
-
-        <h2>🚑 CareBridge AI Loading...</h2>
-        <p>Redirecting to Health Assistant Portal</p>
-
-    </body>
-    </html>
-    """
+def home():
+    return "CareBridge AI Health Engine 🚀"
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    data=request.get_json()
+    try:
+        data = request.get_json()
 
-    symptoms=data.get("symptoms","")
-    age=int(data.get("age",0))
+        symptoms = data.get("symptoms", "")
+        age = int(data.get("age", 0))
 
-    risk,probability,advice,sustainability = ai_triage_engine(symptoms,age)
+        result = analyze_health(symptoms, age)
 
-    return jsonify({
-        "risk":risk,
-        "confidence":probability,
-        "explanation":advice,
-        "sustainability":sustainability
-    })
+        return jsonify(result)
+
+    except Exception as e:
+
+        return jsonify({
+            "risk": "Error",
+            "explanation": str(e),
+            "confidence": 0,
+            "sustainability": 0
+        })
 
 
-if __name__=="__main__":
+# ============================
+# RUN SERVER
+# ============================
+
+if __name__ == "__main__":
     app.run()
