@@ -42,7 +42,7 @@ Carebridge-AI/
 
 #### Clone Repository
 
-git clone ```https://github.com/yourusername/Carebridge-AI.git```
+git clone ```https://github.com/yourusername/Carebridge-AI.git```  
 cd ```Carebridge-AI```
 
 #### Install Dependencies
