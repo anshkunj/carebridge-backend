@@ -34,8 +34,7 @@ Carebridge-AI/
 ├── index.html        
 ├── style.css        
 ├── script.js
-
----
+```
 
 ---
 
