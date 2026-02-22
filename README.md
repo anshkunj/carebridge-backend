@@ -49,10 +49,10 @@ cd ```Carebridge-AI```
 ```pip install -r requirements.txt```
 
 #### Run Backend
-```gunicorn app:app
+```gunicorn app:app```
 
 #### Open Frontend
-```index.html
+```index.html```
 
 ## 🌍 Deployment
 **Backend:**  
