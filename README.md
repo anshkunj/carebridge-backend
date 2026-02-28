@@ -42,18 +42,32 @@ Carebridge-AI/
 
 ---
 
+## 🧠 Health Risk Logic
+
+Risk is calculated using:
+
+- Symptom severity scoring
+- Age risk factors
+- Emergency override detection
+
+Risk Levels:
+- 🟢 Low Risk
+- 🟡 Moderate Risk
+- 🔴 High Risk
+- 🚨 Emergency Alert
+
 ## 🚀 Setup Instructions
 
 #### Clone Repository
 
-git clone ```https://github.com/yourusername/Carebridge-AI.git```  
+git clone ```https://github.com/anshkunj/Carebridge-AI.git```  
 cd ```Carebridge-AI```
 
 #### Install Dependencies
 ```pip install -r requirements.txt```
 
 #### Run Backend
-gunicorn app:app
+gunicorn app:app --bind 0.0.0.0:$PORT
 
 #### Open Frontend
 ```index.html```
