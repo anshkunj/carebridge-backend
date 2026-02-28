@@ -130,3 +130,27 @@ function startVoice(){
         e.results[0][0].transcript;
     };
 }
+
+/* ===== REPORT GENERATOR ===== */
+async function generateReport(){
+
+const symptoms = document.getElementById("symptoms").value;
+const age = document.getElementById("age").value;
+
+const res = await fetch(
+"https://carebridge-backend-ro4e.onrender.com/generate-report",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+symptoms,
+age
+})
+});
+
+const data = await res.json();
+
+window.open(data.report_url,"_blank");
+}
