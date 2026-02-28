@@ -231,6 +231,32 @@ reportBtn.disabled = false;
 reportBtn.innerText = "📄 Download Health Report";
 }
 
+
+const hospitalBtn = document.getElementById("hospitalBtn");
+
+if(hospitalBtn){
+
+hospitalBtn.onclick = async (e)=>{
+
+e.preventDefault();
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(pos=>{
+
+const lat = pos.coords.latitude;
+const lon = pos.coords.longitude;
+
+window.open(
+`https://www.google.com/maps/search/?api=1&query=hospital+near+${lat},${lon}`,
+"_blank"
+);
+
+});
+
+}
+};
+
 }
 
 /* ===============================
