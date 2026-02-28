@@ -96,8 +96,8 @@ GitHub Pages
 **Response:**
 {  
   "risk": "Low",  
-  "confidence": 90,  
-  "explanation": "Rest and hydrate"  
+  "confidence": "75%",  
+  "explanation": "Fever detected | Cough detected. Rest, hydrate and monitor symptoms"  
 }  
 
 >Try it live from the frontend: https://anshkunj.github.io/Carebridge-AI/
