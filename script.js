@@ -1,11 +1,7 @@
 const form = document.getElementById("healthForm");
 
 const analyzeBtn = document.querySelector("button[type='submit']");
-let reportBtn;
-
-window.addEventListener("DOMContentLoaded", ()=>{
-reportBtn = document.querySelector(".report-btn");
-});
+const reportBtn = document.querySelector(".report-btn");
 
 /* ===============================
    COMMON VALIDATION ENGINE
