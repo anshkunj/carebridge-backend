@@ -244,7 +244,7 @@ def generate_report():
 
         # Title
         elements.append(
-            Paragraph("🚑 CareBridge Legendary AI Medical Report", title_style)
+            Paragraph("🚑 CareBridge AI Medical Report", title_style)
         )
 
         elements.append(Spacer(1, 15))
@@ -310,7 +310,7 @@ def generate_report():
 
         elements.append(
             Paragraph(
-                "Powered by CareBridge Legendary AI Health Intelligence",
+                "Powered by CareBridge AI Health Intelligence",
                 ParagraphStyle(
                     name="footer",
                     alignment=TA_CENTER,
@@ -328,7 +328,7 @@ def generate_report():
             buffer,
             mimetype="application/pdf",
             as_attachment=True,
-            download_name="CareBridge_Legendary_Report.pdf"
+            download_name="CareBridge_Report.pdf"
         )
 
     except Exception as e:
