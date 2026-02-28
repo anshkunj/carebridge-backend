@@ -199,6 +199,39 @@ font-size:1.15rem;
 line-height:1.8;
 }
 
+/* ===== LIGHT THEME ===== */
+
+.light-theme{
+background:#f8fafc;
+color:#0f172a;
+}
+
+.light-theme .card{
+background:white;
+color:#0f172a;
+box-shadow:0 20px 60px rgba(0,0,0,0.1);
+}
+
+.light-theme textarea,
+.light-theme input{
+background:white;
+color:black;
+border:1px solid #cbd5e1;
+}
+
+.light-theme #result{
+background:white;
+color:#0f172a;
+}
+
+.light-theme .hero-title{
+color:#0284c7;
+}
+
+.light-theme .tagline{
+color:#475569;
+}
+
 /* ===== RESPONSIVE ===== */
 
 @media(max-width:600px){
