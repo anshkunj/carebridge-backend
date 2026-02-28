@@ -45,7 +45,7 @@ const riskBar = document.getElementById("riskBar");
 /* Loading UI */
 
 riskText.innerText = "Analyzing symptoms...🧐";
-resultBox.innerText = "Processing health risk analysis...";
+resultBox.innerText = "Processing health risk analysis...⏳";
 
 try{
 
@@ -195,7 +195,7 @@ reportBtn.disabled = true;
 reportBtn.innerText = "Generating Report... 📄";
 
 const res = await fetch(
-"https://carebridge-backend-ro4e.onrender.com/generate-report",
+"https://carebridge-backend-ro4e.onrender.com/generate_report",
 {
 method:"POST",
 headers:{
