@@ -86,6 +86,19 @@ style="display:none">
 
 <script src="script.js"></script>
 
+<script>
+window.addEventListener("DOMContentLoaded", ()=>{
+
+const reportBtn = document.querySelector(".report-btn");
+
+if(reportBtn){
+reportBtn.disabled = true;
+reportBtn.style.opacity = "0.5";
+}
+
+});
+</script>
+
 </body>
 
 </div>
