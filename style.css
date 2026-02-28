@@ -194,16 +194,20 @@ box-shadow:0 15px 40px rgba(56,189,248,0.4);
 
 /* ===== ACCESSIBILITY TEXT ===== */
 
-.large-text{
-font-size:1.15rem;
-line-height:1.8;
+.large-text {
+    font-size: 1.15rem;
+}
+
+.large-text * {
+    font-size: 1.15em !important;
+    line-height: 1.8;
 }
 
 /* ===== LIGHT THEME ===== */
 
-.light-theme{
-background:#f8fafc;
-color:#0f172a;
+body.light-theme{
+    background:#f8fafc !important;
+    color:#0f172a;
 }
 
 .light-theme .card{
