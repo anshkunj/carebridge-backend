@@ -233,7 +233,7 @@ reportBtn.disabled = true;
 reportBtn.innerText = "Generating Report... 📄";
 
 const res = await fetch(
-"https://carebridge-backend-ro4i.onrender.com/generate-report",
+"https://carebridge-backend-ro4e.onrender.com/generate-report",
 {
 method:"POST",
 headers:{
