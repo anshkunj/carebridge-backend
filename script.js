@@ -274,19 +274,6 @@ glow.style.top = e.clientY + "px";
 
 document.addEventListener("touchmove", e=>{
 const touch = e.touches[0];
-glow.style.left = touch.clientX + "px";
-glow.style.top = touch.clientY + "px";
-});
-
-}
-
-document.addEventListener("mousemove", e=>{
-glow.style.left = e.clientX + "px";
-glow.style.top = e.clientY + "px";
-});
-
-document.addEventListener("touchmove", e=>{
-const touch = e.touches[0];
 
 glow.style.left = touch.clientX + "px";
 glow.style.top = touch.clientY + "px";
