@@ -177,51 +177,53 @@ def analyze():
 def generate_report():
 
     try:
-        data = request.json or {}
+        data = request.get_json(force=True) or {}
 
         symptoms = data.get("symptoms", "")
         age = int(data.get("age", 0))
 
         result = analyze_health(symptoms, age)
 
+        # -----------------------------
+        # PDF Setup
+        # -----------------------------
+
         buffer = io.BytesIO()
-
         doc = SimpleDocTemplate(buffer)
-
-        # ===============================
-        # Premium Medical Report Styles
-        # ===============================
 
         from reportlab.lib import colors
         from reportlab.platypus import Paragraph, Spacer, Table, TableStyle
         from reportlab.lib.styles import ParagraphStyle
-        from reportlab.lib.enums import TA_CENTER, TA_LEFT
+        from reportlab.lib.enums import TA_CENTER
+
+        # -----------------------------
+        # Styles
+        # -----------------------------
 
         title_style = ParagraphStyle(
             name="title",
             fontSize=24,
             alignment=TA_CENTER,
             textColor=colors.HexColor("#0ea5e9"),
-            spaceAfter=25
+            spaceAfter=20
         )
 
-        section_title_style = ParagraphStyle(
-            name="section_title",
+        section_style = ParagraphStyle(
+            name="section",
             fontSize=14,
             textColor=colors.HexColor("#38bdf8"),
-            spaceAfter=10
+            spaceAfter=12
         )
 
         normal_style = ParagraphStyle(
             name="normal",
             fontSize=11,
-            leading=18,
-            alignment=TA_LEFT
+            leading=18
         )
 
-        # ===============================
+        # -----------------------------
         # Report Elements
-        # ===============================
+        # -----------------------------
 
         elements = []
 
@@ -232,45 +234,65 @@ def generate_report():
 
         elements.append(Spacer(1, 20))
 
-        # Patient Info Table
-        patient_table = Table([
-            ["Patient Age", str(age)],
-            ["Symptoms", symptoms],
-            ["Risk Level", result["risk"]],
-            ["Confidence Score", str(result["confidence"]) + "%"]
-        ])
+        # -----------------------------
+        # Patient Table
+        # -----------------------------
 
-        patient_table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#0f172a")),
-            ("TEXTCOLOR", (0, 0), (-1, -1), colors.white),
-            ("GRID", (0, 0), (-1, -1), 0.8, colors.HexColor("#38bdf8")),
-            ("PADDING", (0, 0), (-1, -1), 12),
+        table_data = [
+            ["Field", "Details"],
+            ["Patient Age", str(age)],
+            ["Symptoms", symptoms if symptoms else "Not Provided"],
+            ["Risk Level", result.get("risk", "Unknown")],
+            ["Confidence Score", str(result.get("confidence", 0)) + "%"]
+        ]
+
+        table = Table(table_data, colWidths=[180, 320])
+
+        table.setStyle(TableStyle([
+
+            ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#0ea5e9")),
+            ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+
+            ("BACKGROUND", (0,1), (-1,-1), colors.HexColor("#0f172a")),
+            ("TEXTCOLOR", (0,1), (-1,-1), colors.white),
+
+            ("GRID", (0,0), (-1,-1), 1, colors.HexColor("#38bdf8")),
+            ("PADDING", (0,0), (-1,-1), 12),
+
         ]))
 
-        elements.append(patient_table)
+        elements.append(table)
 
         elements.append(Spacer(1, 25))
 
-        # Medical Assessment Section
+        # -----------------------------
+        # Medical Assessment
+        # -----------------------------
+
         elements.append(
-            Paragraph("🩺 Medical Assessment", section_title_style)
+            Paragraph("🩺 Medical Assessment", section_style)
         )
 
         elements.append(
-            Paragraph(result["explanation"], normal_style)
+            Paragraph(result.get("explanation", ""), normal_style)
         )
 
+        # -----------------------------
         # Emergency Warning
-        if result["risk"] in ["High", "EMERGENCY"]:
+        # -----------------------------
+
+        if result.get("risk") in ["High", "EMERGENCY"]:
 
             elements.append(Spacer(1, 20))
 
             emergency_text = """
-⚠ High Risk Detected
+⚠ High Risk Alert
 
-Please seek medical consultation immediately.
+Immediate medical consultation is strongly recommended.
 Visit nearest hospital if symptoms worsen.
 """
+
+            from reportlab.lib.styles import ParagraphStyle
 
             elements.append(
                 Paragraph(
@@ -284,12 +306,15 @@ Visit nearest hospital if symptoms worsen.
                 )
             )
 
+        # -----------------------------
         # Footer
-        elements.append(Spacer(1, 30))
+        # -----------------------------
+
+        elements.append(Spacer(1, 40))
 
         elements.append(
             Paragraph(
-                "Powered by CareBridge AI Health System",
+                "Powered by CareBridge AI Health Intelligence",
                 ParagraphStyle(
                     name="footer",
                     alignment=TA_CENTER,
@@ -311,11 +336,13 @@ Visit nearest hospital if symptoms worsen.
         )
 
     except Exception as e:
-        print("Report Error:", str(e))
+
+        print("Report Generation Error:", str(e))
 
         return jsonify({
             "error": "Report generation failed"
         }), 500
+
 # -----------------------------
 
 if __name__ == "__main__":
