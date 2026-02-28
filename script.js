@@ -1,0 +1,289 @@
+/* ===============================
+GLOBAL ELEMENT REFERENCES
+================================ */
+
+const form = document.getElementById("healthForm");
+const analyzeBtn = document.querySelector("button[type='submit']");
+const reportBtn = document.getElementById("reportBtn");
+
+/* ===============================
+UTILITY VALIDATION
+================================ */
+
+function validateInputs(){
+
+const symptoms = document.getElementById("symptoms").value.trim();
+const age = document.getElementById("age").value.trim();
+
+if(!symptoms){
+alert("Please enter symptoms");
+return false;
+}
+
+if(!age){
+alert("Please enter age");
+return false;
+}
+
+return true;
+}
+
+/* ===============================
+INITIAL UI STATE
+================================ */
+
+window.addEventListener("DOMContentLoaded", ()=>{
+
+if(reportBtn){
+reportBtn.disabled = true;
+reportBtn.style.opacity = "0.5";
+}
+
+});
+
+/* ===============================
+ANALYZE RISK
+================================ */
+
+form.addEventListener("submit", async (e)=>{
+
+e.preventDefault();
+
+if(!validateInputs()) return;
+
+const symptoms = document.getElementById("symptoms").value;
+const age = document.getElementById("age").value;
+
+const resultBox = document.getElementById("report");
+const riskText = document.getElementById("riskText");
+const riskBar = document.getElementById("riskBar");
+
+try{
+
+analyzeBtn.disabled = true;
+
+riskText.innerText = "Analyzing symptoms...🧐";
+resultBox.innerText = "Processing health risk analysis...⏳";
+
+/* Backend call */
+
+const res = await fetch(
+"https://carebridge-backend-ro4e.onrender.com/analyze",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({symptoms, age})
+});
+
+if(!res.ok){
+throw new Error("Server error");
+}
+
+const data = await res.json();
+
+/* Display result */
+
+riskText.innerText =
+`Risk : ${data.risk} | Confidence : ${data.confidence}%`;
+
+resultBox.innerText = data.explanation || "No explanation available";
+
+/* Enable report button */
+
+if(reportBtn){
+reportBtn.disabled = false;
+reportBtn.style.opacity = "1";
+}
+
+/* Risk Bar */
+
+let width = 30;
+
+if(data.risk === "Low") width = 30;
+else if(data.risk === "Moderate") width = 60;
+else if(data.risk === "High") width = 90;
+
+if(riskBar){
+riskBar.style.width = width + "%";
+}
+
+/* Risk Colors */
+
+riskText.classList.remove(
+"risk-low",
+"risk-medium",
+"risk-high"
+);
+
+if(data.risk === "Low")
+riskText.classList.add("risk-low");
+
+else if(data.risk === "Moderate")
+riskText.classList.add("risk-medium");
+
+else
+riskText.classList.add("risk-high");
+
+/* Hospital Link */
+
+const hospitalBtn = document.getElementById("hospitalBtn");
+
+if(hospitalBtn && data.hospital_map){
+hospitalBtn.href = data.hospital_map;
+hospitalBtn.style.display = "inline-block";
+}
+
+}
+catch(err){
+
+console.error(err);
+
+resultBox.innerText =
+"Error analyzing symptoms. Please try again.";
+
+}
+finally{
+analyzeBtn.disabled = false;
+}
+
+});
+
+
+/* ===============================
+THEME TOGGLE
+================================ */
+
+function toggleTheme(){
+
+document.body.classList.toggle("light-theme");
+
+if(document.body.classList.contains("light-theme")){
+localStorage.setItem("theme","light");
+}else{
+localStorage.setItem("theme","dark");
+}
+
+}
+
+/* Load saved theme */
+
+window.addEventListener("load", ()=>{
+
+if(localStorage.getItem("theme")==="light"){
+document.body.classList.add("light-theme");
+}
+
+});
+
+/* ===============================
+TEXT SIZE TOGGLE
+================================ */
+
+function toggleText(){
+document.body.classList.toggle("large-text");
+}
+
+/* ===============================
+VOICE INPUT
+================================ */
+
+function startVoice(){
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Voice input not supported in this browser");
+return;
+}
+
+const recognition = new SpeechRecognition();
+recognition.lang = "en-US";
+
+recognition.start();
+
+recognition.onresult = e=>{
+document.getElementById("symptoms").value =
+e.results[0][0].transcript;
+};
+
+recognition.onerror = ()=>{
+alert("Voice recognition error occurred");
+};
+
+}
+
+/* ===============================
+REPORT DOWNLOAD
+================================ */
+
+async function generateReport(){
+
+if(!validateInputs()) return;
+
+const symptoms = document.getElementById("symptoms").value.trim();
+const age = document.getElementById("age").value;
+
+try{
+
+reportBtn.disabled = true;
+reportBtn.innerText = "Generating Report... 📄";
+
+const res = await fetch(
+"https://carebridge-backend-ro4i.onrender.com/generate-report",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({symptoms, age})
+});
+
+if(!res.ok){
+throw new Error("Report generation failed");
+}
+
+const blob = await res.blob();
+
+const url = window.URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+a.href = url;
+a.download = "CareBridge_Report.pdf";
+a.click();
+
+}
+catch(err){
+alert("Report generation failed");
+console.error(err);
+}
+finally{
+reportBtn.disabled = false;
+reportBtn.innerText = "📄 Download Health Report";
+}
+
+}
+
+/* ===============================
+TOUCH GLOW EFFECT
+================================ */
+
+const glow = document.getElementById("touchGlow");
+
+if(glow){
+
+document.addEventListener("mousemove", e=>{
+glow.style.left = e.clientX + "px";
+glow.style.top = e.clientY + "px";
+});
+
+document.addEventListener("touchmove", e=>{
+const touch = e.touches[0];
+glow.style.left = touch.clientX + "px";
+glow.style.top = touch.clientY + "px";
+});
+
+}
