@@ -1,10 +1,4 @@
 # 🚑 CareBridge AI — Accessibility First Health Risk Analyzer
-
-![CareBridge AI](https://img.shields.io/badge/Health-AI-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-
-## 🌟 Overview
-
 **CareBridge AI** is an accessibility-focused health risk analysis system powered by AI-style symptom scoring and smart medical report generation.
 
 The platform helps users:
