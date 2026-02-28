@@ -18,60 +18,86 @@ def analyze_health(symptoms, age):
     score = 0
     explanation_list = []
 
-    if "fever" in symptoms:
-        score += 2
-        explanation_list.append("Fever detected")
+    # -----------------------------
+    # Symptom Risk Weighting
+    # -----------------------------
 
-    if "cough" in symptoms:
-        score += 2
-        explanation_list.append("Cough symptoms present")
+    symptom_weights = {
+        "fever": 2,
+        "cough": 2,
+        "breathing": 5,
+        "shortness": 5,
+        "chest pain": 8,
+        "headache": 1,
+        "dizziness": 2,
+        "vomiting": 3,
+        "fatigue": 1
+    }
 
-    if "breathing" in symptoms or "shortness" in symptoms:
-        score += 5
-        explanation_list.append("Breathing difficulty detected")
+    for symptom, weight in symptom_weights.items():
+        if symptom in symptoms:
+            score += weight
+            explanation_list.append(f"{symptom.title()} detected")
 
-    if "chest pain" in symptoms:
-        score += 6
-        explanation_list.append("Chest pain is serious symptom")
-
-    if "headache" in symptoms:
-        score += 1
+    # -----------------------------
+    # Age Risk Factors
+    # -----------------------------
 
     if age >= 60:
-        score += 3
+        score += 4
         explanation_list.append("Senior age risk factor")
 
     if age <= 5:
-        score += 2
+        score += 3
+        explanation_list.append("Child age risk factor")
 
-    # Risk classification
+    # -----------------------------
+    # Emergency Overrides (VERY IMPORTANT ⚠️)
+    # -----------------------------
+
     if "chest pain" in symptoms or "emergency" in symptoms:
         risk = "EMERGENCY"
         advice = "Seek emergency medical help immediately"
-        hospital_link = "https://www.google.com/maps/search/hospital+near+me"
+        hospital_link = "https://www.google.com/maps/search/?api=1&query=hospital+near+me"
 
-    elif score <= 3:
+        return {
+            "risk": risk,
+            "confidence": 95,
+            "explanation": advice,
+            "hospital_map": hospital_link
+        }
+
+    # -----------------------------
+    # Risk Classification
+    # -----------------------------
+
+    if score <= 4:
         risk = "Low"
         advice = "Rest, hydrate and monitor symptoms"
         hospital_link = "https://www.google.com/search?q=home+care+tips"
 
-    elif score <= 7:
+    elif score <= 10:
         risk = "Moderate"
-        advice = "Consider consulting doctor if symptoms persist"
-        hospital_link = "https://www.google.com/maps/search/clinic+near+me"
+        advice = "Consult doctor if symptoms persist"
+        hospital_link = "https://www.google.com/maps/search/?api=1&query=clinic+near+me"
 
     else:
         risk = "High"
-        advice = "Medical consultation recommended urgently"
-        hospital_link = "https://www.google.com/maps/search/hospital+near+me"
+        advice = "Medical consultation strongly recommended"
+        hospital_link = "https://www.google.com/maps/search/?api=1&query=hospital+near+me"
+
+    # -----------------------------
+    # Confidence Calculation
+    # -----------------------------
+
+    confidence = min(98, 65 + (score * 2.5))
 
     return {
         "risk": risk,
-        "confidence": min(95, 70 + score * 3),
+        "confidence": round(confidence, 2),
         "explanation": " | ".join(explanation_list) + ". " + advice,
         "hospital_map": hospital_link
     }
-
 
 # -----------------------------
 # ROUTES
