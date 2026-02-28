@@ -265,3 +265,12 @@ const touch = e.touches[0];
 glow.style.left = touch.clientX + "px";
 glow.style.top = touch.clientY + "px";
 });
+
+window.addEventListener("DOMContentLoaded", ()=>{
+
+if(reportBtn){
+reportBtn.disabled = true;
+reportBtn.style.opacity = "0.5";
+}
+
+});
