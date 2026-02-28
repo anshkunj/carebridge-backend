@@ -11,7 +11,7 @@ form.addEventListener("submit", async e => {
     const riskText = document.getElementById("riskText");
     const riskBar = document.getElementById("riskBar");
 
-    riskText.innerText = "Analyzing symptoms...";
+    riskText.innerText = "Analyzing symptoms...🧐";
     resultBox.innerText = "Processing health risk analysis...";
 
     try{
