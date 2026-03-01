@@ -38,13 +38,7 @@ def analyze_health(symptoms, age, location=""):
     # --------------------------------
     # Google Maps Hospital Link
     # --------------------------------
-    hospital_map = ""
-
-    if location:
-        hospital_map = (
-            "https://www.google.com/maps/search/?api=1&query=hospitals+near+"
-            + location.replace(" ", "+")
-        )
+    hospital_map = "https://www.google.com/maps/search/?api=1&query=hospitals+near+me"
 
     # --------------------------------
     # Emergency Override
