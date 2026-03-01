@@ -176,7 +176,7 @@ Medical PDF Report Download
 >Try it live from the backend: https://https://carebridge-backend-ro4e.onrender.com/
 
 <p align="center">
-  <img src="https://github.com/anshkunj/Carebridge-AI/blob/a0541303b239cbedaf67a67a74a5b28e700b2c26/assets/file_0000000027e871faae13d1289f22b20a.png" alt="Carebridge-AI 🚑" width="1200">
+  <img src="https://github.com/anshkunj/Carebridge-AI/blob/3e2a9cff32ed8b5ba46d9886792b1f8086c3cb1b/assets/IMG_20260301_125840.jpg" alt="Carebridge-AI 🚑" width="1200">
 </p>
 
 <h1 align="center">CareBridge AI</h1>
