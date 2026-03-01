@@ -1,15 +1,14 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
 import io
 import os
 
 app = Flask(__name__)
-
-# Allow frontend access
 CORS(app, resources={r"/*": {"origins": "*"}})
-
 
 # -----------------------------
 # HEALTH ANALYSIS ENGINE
@@ -18,11 +17,9 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def analyze_health(symptoms, age):
 
     symptoms = symptoms.lower()
-
     score = 0
     explanation_list = []
 
-    # Symptom weights
     symptom_weights = {
         "fever": 2,
         "cough": 2,
@@ -35,80 +32,83 @@ def analyze_health(symptoms, age):
         "fatigue": 1
     }
 
-    # Detect symptoms safely
     for symptom, weight in symptom_weights.items():
         if symptom in symptoms:
             score += weight
             explanation_list.append(f"{symptom.title()} detected")
 
-    # Age risk factors
     if age >= 60:
         score += 4
         explanation_list.append("Senior age risk factor")
 
-    if age <= 5 and age > 0:
+    if 0 < age <= 5:
         score += 3
         explanation_list.append("Child age risk factor")
 
-    # -----------------------------
-    # Emergency Overrides
-    # -----------------------------
-
-    # More strict detection
     symptom_tokens = [s.strip() for s in symptoms.split(",")]
 
     if "chest pain" in symptom_tokens or "emergency" in symptom_tokens:
         return {
             "risk": "EMERGENCY",
             "confidence": 95,
-            "explanation": "Seek emergency medical help immediately",
-            "hospital_map": "https://www.google.com/maps/search/?api=1&query=hospital+near+me"
+            "explanation": "Seek emergency medical help immediately"
         }
-
-    # -----------------------------
-    # Risk Classification
-    # -----------------------------
 
     if score <= 4:
         risk = "Low"
         advice = "Rest, hydrate and monitor symptoms"
-        hospital_link = "https://www.google.com/search?q=home+care+tips"
 
     elif score <= 10:
         risk = "Moderate"
         advice = "Consult doctor if symptoms persist"
-        hospital_link = "https://www.google.com/maps/search/?api=1&query=clinic+near+me"
 
     else:
         risk = "High"
         advice = "Medical consultation strongly recommended"
-        hospital_link = "https://www.google.com/maps/search/?api=1&query=hospital+near+me"
 
-    # Confidence calculation
     confidence = min(98, 65 + (score * 2.5))
 
     explanation_text = " | ".join(explanation_list)
     if explanation_text:
         explanation_text += ". "
-
     explanation_text += advice
 
     return {
         "risk": risk,
         "confidence": round(confidence, 2),
-        "explanation": explanation_text,
-        "hospital_map": hospital_link
+        "explanation": explanation_text
     }
 
-def generate_medical_summary(result):
+# -----------------------------
+# SUSTAINABILITY ENGINE
+# -----------------------------
 
+def calculate_green_score(risk):
+    if risk == "Low":
+        return 90
+    elif risk == "Moderate":
+        return 60
+    elif risk == "High":
+        return 25
+    else:
+        return 0
+
+def estimate_environmental_impact(risk):
+    if risk == "Low":
+        return {"co2_saved": 4.5, "paper_saved": 1}
+    elif risk == "Moderate":
+        return {"co2_saved": 2.0, "paper_saved": 0.5}
+    else:
+        return {"co2_saved": 0, "paper_saved": 0}
+
+def generate_medical_summary(result):
     risk = result.get("risk", "Unknown")
 
     if risk == "Low":
-        return "Patient shows low risk symptoms. Rest, hydration and monitoring recommended."
+        return "Low health risk detected. Preventive care reduces unnecessary hospital visits and environmental impact."
 
     elif risk == "Moderate":
-        return "Moderate risk detected. Medical consultation recommended if symptoms persist."
+        return "Moderate risk detected. Early consultation recommended to prevent condition escalation."
 
     elif risk == "High":
         return "High risk symptoms detected. Immediate medical consultation strongly recommended."
@@ -122,70 +122,21 @@ def generate_medical_summary(result):
 
 @app.route("/")
 def home():
-    return """
-    <html>
-    <head>
-    <title>CareBridge AI</title>
-    </head>
-
-    <body style="
-    background:#0f172a;
-    color:white;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-family:sans-serif">
-
-    <div style="text-align:center">
-        <h1>🚑 CareBridge AI</h1>
-        <p>Accessibility First Health Risk Analyzer</p>
-
-        <a href="https://anshkunj.github.io/Carebridge-AI"
-        style="padding:14px 28px;
-        background:#38bdf8;
-        color:black;
-        text-decoration:none;
-        border-radius:12px;
-        font-weight:bold;
-        display:inline-block;
-        margin-top:20px">
-        Open Frontend 🌍
-        </a>
-    </div>
-
-    </body>
-    </html>
-    """
-
-
-# -----------------------------
-# Risk Analysis Endpoint
-# -----------------------------
+    return "<h1>🚑 CareBridge Sustainable AI</h1>"
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-
     try:
         data = request.json or {}
-
         symptoms = data.get("symptoms", "")
         age = int(data.get("age", 0))
-
         result = analyze_health(symptoms, age)
-
         return jsonify(result)
-
-    except Exception:
-        return jsonify({
-            "risk": "Error",
-            "confidence": 0,
-            "explanation": "Server processing error"
-        }), 500
-
+    except:
+        return jsonify({"risk": "Error"}), 500
 
 # -----------------------------
-# REPORT GENERATION
+# LEGENDARY REPORT GENERATION
 # -----------------------------
 
 @app.route("/generate-report", methods=["POST"])
@@ -198,36 +149,22 @@ def generate_report():
         age = int(data.get("age", 0))
 
         result = analyze_health(symptoms, age)
+        summary = generate_medical_summary(result)
 
-        # -----------------------------
-        # PDF Setup
-        # -----------------------------
+        sustainability = estimate_environmental_impact(result["risk"])
+        green_score = calculate_green_score(result["risk"])
 
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer)
 
-        from reportlab.lib import colors
-        from reportlab.platypus import Paragraph, Spacer, Table, TableStyle
-        from reportlab.lib.styles import ParagraphStyle
-        from reportlab.lib.enums import TA_CENTER
-
-        # -----------------------------
-        # Styles
-        # -----------------------------
+        elements = []
 
         title_style = ParagraphStyle(
             name="title",
-            fontSize=26,
+            fontSize=24,
             alignment=TA_CENTER,
             textColor=colors.HexColor("#0ea5e9"),
             spaceAfter=20
-        )
-
-        subtitle_style = ParagraphStyle(
-            name="subtitle",
-            fontSize=14,
-            textColor=colors.HexColor("#38bdf8"),
-            spaceAfter=10
         )
 
         normal_style = ParagraphStyle(
@@ -236,117 +173,62 @@ def generate_report():
             leading=18
         )
 
-        # -----------------------------
-        # Report Elements
-        # -----------------------------
-
-        elements = []
-
-        # Title
         elements.append(
-            Paragraph("🚑 CareBridge AI Medical Report", title_style)
+            Paragraph("🌍 CareBridge Sustainable AI Medical Report", title_style)
         )
-
         elements.append(Spacer(1, 15))
 
-        # Health Score Card
-        summary = generate_medical_summary(result)
-
         table_data = [
-            ["Health Field", "Value"],
+            ["Field", "Value"],
             ["Age", str(age)],
             ["Symptoms", symptoms],
             ["Risk Level", result["risk"]],
-            ["Confidence Score", str(result["confidence"]) + "%"]
+            ["Confidence", str(result["confidence"]) + "%"],
+            ["Green Sustainability Score", f"{green_score}/100"],
+            ["Estimated CO₂ Saved", f"{sustainability['co2_saved']} kg"],
+            ["Paper Saved", f"{sustainability['paper_saved']} sheet(s)"]
         ]
 
-        table = Table(table_data, colWidths=[180, 320])
-
+        table = Table(table_data, colWidths=[200, 300])
         table.setStyle(TableStyle([
             ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#0ea5e9")),
             ("TEXTCOLOR", (0,0), (-1,0), colors.white),
-
-            ("BACKGROUND", (0,1), (-1,-1), colors.HexColor("#0f172a")),
-            ("TEXTCOLOR", (0,1), (-1,-1), colors.white),
-
             ("GRID", (0,0), (-1,-1), 1, colors.HexColor("#38bdf8")),
-            ("PADDING", (0,0), (-1,-1), 12),
+            ("PADDING", (0,0), (-1,-1), 10),
         ]))
 
         elements.append(table)
-
-        elements.append(Spacer(1, 25))
-
-        # Medical AI Summary
-        elements.append(
-            Paragraph("🧠 AI Medical Insight", subtitle_style)
-        )
+        elements.append(Spacer(1, 20))
 
         elements.append(
-            Paragraph(summary, normal_style)
+            Paragraph("🧠 AI Medical Insight", title_style)
         )
+        elements.append(Spacer(1, 10))
+        elements.append(Paragraph(summary, normal_style))
 
-        # Emergency Warning Section
-        if result["risk"] in ["High", "EMERGENCY"]:
-
-            elements.append(Spacer(1, 20))
-
-            emergency_style = ParagraphStyle(
-                name="emergency",
-                fontSize=13,
-                textColor=colors.red,
-                leading=18
-            )
-
-            elements.append(
-                Paragraph(
-                    "⚠ Emergency Risk Detected - Immediate medical attention recommended.",
-                    emergency_style
-                )
-            )
-
-        # Footer
-        elements.append(Spacer(1, 40))
-
+        elements.append(Spacer(1, 30))
         elements.append(
             Paragraph(
-                "Powered by CareBridge AI Health Intelligence",
-                ParagraphStyle(
-                    name="footer",
-                    alignment=TA_CENTER,
-                    fontSize=9,
-                    textColor=colors.grey
-                )
+                "This report promotes preventive healthcare and environmental sustainability by reducing unnecessary hospital visits and resource consumption.",
+                normal_style
             )
         )
 
         doc.build(elements)
-
         buffer.seek(0)
 
         return send_file(
             buffer,
             mimetype="application/pdf",
             as_attachment=True,
-            download_name="CareBridge_Report.pdf"
+            download_name="CareBridge_Sustainable_Report.pdf"
         )
 
     except Exception as e:
-
         print("Report Error:", str(e))
+        return jsonify({"error": "Report generation failed"}), 500
 
-        return jsonify({
-            "error": "Report generation failed"
-        }), 500
-
-# -----------------------------
 
 if __name__ == "__main__":
-    import os
-    
     port = int(os.environ.get("PORT", 10000))
-
-    app.run(
-        host="0.0.0.0",
-        port=port
-    )
+    app.run(host="0.0.0.0", port=port)
