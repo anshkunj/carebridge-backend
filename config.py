@@ -4,15 +4,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret")
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "super_jwt_secret")
+    # Basic Security
+    SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_key")
 
-    JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
+    # App Config
+    DEBUG = os.getenv("FLASK_ENV") == "development"
 
-    MAX_CONTENT_LENGTH = 2 * 1024 * 1024
+    # Request Limits
+    MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB limit
 
+    # CORS
     ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*")
 
+    # Rate Limiting
+    RATE_LIMIT = os.getenv("RATE_LIMIT", "10 per minute")
+
+    # Medical Disclaimer
     MEDICAL_DISCLAIMER = (
         "This AI tool is for informational purposes only and "
         "does not replace professional medical advice."
