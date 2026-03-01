@@ -2,7 +2,11 @@
 # HEALTH ANALYSIS ENGINE
 # --------------------------------
 
-def analyze_health(symptoms, age, location=""):
+# --------------------------------
+# HEALTH ANALYSIS ENGINE
+# --------------------------------
+
+def analyze_health(symptoms, age):
 
     symptoms = (symptoms or "").lower().strip()
     score = 0
@@ -36,11 +40,6 @@ def analyze_health(symptoms, age, location=""):
         explanation_list.append("Child age risk factor")
 
     # --------------------------------
-    # Google Maps Hospital Link
-    # --------------------------------
-    hospital_map = "https://www.google.com/maps/search/?api=1&query=hospitals+near+me"
-
-    # --------------------------------
     # Emergency Override
     # --------------------------------
     if "chest pain" in symptoms or "emergency" in symptoms:
@@ -48,7 +47,7 @@ def analyze_health(symptoms, age, location=""):
             "risk": "EMERGENCY",
             "confidence": 95,
             "explanation": "Critical symptom detected. Seek emergency medical help immediately.",
-            "hospital_map": hospital_map
+            "hospital_map": "https://www.google.com/maps/search/?api=1&query=hospitals+near+me"
         }
 
     # --------------------------------
@@ -77,9 +76,8 @@ def analyze_health(symptoms, age, location=""):
         "risk": risk,
         "confidence": round(confidence, 2),
         "explanation": explanation_text,
-        "hospital_map": hospital_map
+        "hospital_map": "https://www.google.com/maps/search/?api=1&query=hospitals+near+me"
     }
-
 
 # --------------------------------
 # SUSTAINABILITY ENGINE
