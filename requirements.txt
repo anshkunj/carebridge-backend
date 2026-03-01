@@ -4,3 +4,4 @@ gunicorn
 numpy    
 pandas
 reportlab
+flask-jwt-extended
