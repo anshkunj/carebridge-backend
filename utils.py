@@ -2,7 +2,7 @@
 # HEALTH ANALYSIS ENGINE
 # -----------------------------
 
-def analyze_health(symptoms, age):
+def analyze_health(symptoms, age, location=""):
 
     symptoms = symptoms.lower()
     score = 0
@@ -25,6 +25,7 @@ def analyze_health(symptoms, age):
             score += weight
             explanation_list.append(f"{symptom.title()} detected")
 
+    # Age Risk Factors
     if age >= 60:
         score += 4
         explanation_list.append("Senior age risk factor")
@@ -33,26 +34,32 @@ def analyze_health(symptoms, age):
         score += 3
         explanation_list.append("Child age risk factor")
 
-    symptom_tokens = [s.strip() for s in symptoms.split(",")]
+    # Google Maps hospital link
+    hospital_map = ""
+    if location:
+        hospital_map = f"https://www.google.com/maps/search/hospitals+near+{location.replace(' ', '+')}"
 
-    if "chest pain" in symptom_tokens or "emergency" in symptom_tokens:
+    # Emergency override
+    if "chest pain" in symptoms or "emergency" in symptoms:
         return {
             "risk": "EMERGENCY",
             "confidence": 95,
-            "explanation": "Seek emergency medical help immediately"
+            "explanation": "Critical symptom detected. Seek emergency medical help immediately.",
+            "hospital_map": hospital_map
         }
 
+    # Risk Classification
     if score <= 4:
         risk = "Low"
-        advice = "Rest, hydrate and monitor symptoms"
+        advice = "Rest, hydrate and monitor symptoms."
 
     elif score <= 10:
         risk = "Moderate"
-        advice = "Consult doctor if symptoms persist"
+        advice = "Consult a doctor if symptoms persist."
 
     else:
         risk = "High"
-        advice = "Medical consultation strongly recommended"
+        advice = "Medical consultation strongly recommended."
 
     confidence = min(98, 65 + (score * 2.5))
 
@@ -64,7 +71,8 @@ def analyze_health(symptoms, age):
     return {
         "risk": risk,
         "confidence": round(confidence, 2),
-        "explanation": explanation_text
+        "explanation": explanation_text,
+        "hospital_map": hospital_map
     }
 
 # -----------------------------
