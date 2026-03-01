@@ -85,7 +85,7 @@ def analyze():
         location = data.get("location", "")
 
         # Health Analysis
-        health_result = analyze_health(symptoms, age, location)
+        health_result = analyze_health(symptoms, age)
 
         # Sustainability Analysis (corrected)
         green_score = calculate_green_score(health_result["risk"])
