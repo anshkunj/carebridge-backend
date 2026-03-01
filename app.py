@@ -85,40 +85,26 @@ def analyze():
         age = int(data.get("age", 0))
         location = data.get("location", "")
 
-        # -------------------------
-        # HEALTH ANALYSIS
-        # -------------------------
-        health_result = analyze_health(symptoms, age)
+        # ✅ Pass location to utils function
+        health_result = analyze_health(symptoms, age, location)
 
-        # Google Maps hospital search link
-        hospital_map = ""
-        if location:
-            hospital_map = f"https://www.google.com/maps/search/hospitals+near+{location.replace(' ', '+')}"
-
-        # -------------------------
-        # SUSTAINABILITY ANALYSIS
-        # -------------------------
         green_score = calculate_green_score(data)
         environmental_impact = estimate_environmental_impact(data)
 
         return jsonify({
-            # Frontend compatible fields
             "risk": health_result["risk"],
             "confidence": health_result["confidence"],
             "explanation": health_result["explanation"],
-            "hospital_map": hospital_map,
+            "hospital_map": health_result.get("hospital_map", ""),
 
-            # Sustainability fields
             "green_score": green_score,
             "environmental_impact": environmental_impact,
-
             "disclaimer": app.config["MEDICAL_DISCLAIMER"]
         })
 
     except Exception as e:
         logging.error(f"Analyze Error: {str(e)}")
         return jsonify({"error": "Server processing error"}), 500
-
 
 # --------------------------------
 # REPORT GENERATION
