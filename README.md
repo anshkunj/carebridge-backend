@@ -216,9 +216,8 @@ Theme customization
 
 ---
 
-### ⭐ Support
-If you found this project helpful, consider giving it a ⭐  
-It motivates me to build more real-world, production-ready projects 🚀
+### ⚠ Disclaimer
+This tool is for informational purposes only and does not replace professional medical advice.
 
 ---
 
