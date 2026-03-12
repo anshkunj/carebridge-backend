@@ -182,7 +182,7 @@ Medical PDF Report Download
 </p>
 
 <h1 align="center">CareBridge AI</h1>
-<p align="center">Bridging Healthcare, Accessibility & Sustainability with AI”</p>
+<p align="center">Live demo of Carebridge-AI: Healthcare, Accessibility & Sustainability with AI</p>
 
 ## 🌍 Sustainability Impact
 **CareBridge AI** promotes sustainability by:
