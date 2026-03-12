@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">CareBridge AI</h1>
-<p align="center">Bridging Healthcare, Accessibility & Sustainability with AI”</p>
+<p align="center">Bridging Healthcare, Accessibility & Sustainability with AI</p>
 
 
 # 🚑 CareBridge AI  
